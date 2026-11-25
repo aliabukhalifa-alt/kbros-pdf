@@ -1,0 +1,111 @@
+/* KBros PDF Editor for iPhone - the 1.3.0 look (rule look-01): a calm canvas that follows Light and Dark, floating
+   rounded bars, crimson for the brand only. Safe areas: the notch / Dynamic Island and the home indicator. */
+:root {
+  --canvas: #E7E9ED; --bar: rgba(255,255,255,.92); --text: #1D1D1F; --sub: #6E6E73; --line: rgba(0,0,0,.08);
+  --card: rgba(255,255,255,.96); --brand: #E8334A; --brand-light: #FF6A72; --brand-deep: #B5102D; --scrim: rgba(0,0,0,.35);
+  --shadow: 0 6px 24px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.08);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #1B1C20; --bar: rgba(42,43,49,.92); --text: #F2F2F5; --sub: #A0A3AD; --line: rgba(255,255,255,.12);
+    --card: rgba(42,43,49,.96); --scrim: rgba(0,0,0,.55); --shadow: 0 6px 24px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.4);
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: var(--canvas); color: var(--text); overflow: hidden;
+  font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+/* the pages: every touch on them is the app's, never the browser's (no page zoom, no scroll bounce) */
+#pages { position: fixed; inset: 0; width: 100vw; height: 100%; touch-action: none; display: block; }
+
+/* floating bars */
+.bar { position: fixed; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px;
+  background: var(--bar); box-shadow: var(--shadow); -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px); transition: opacity .16s ease; z-index: 5; }
+#top { top: calc(env(safe-area-inset-top) + 10px); width: calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));
+  max-width: 760px; height: 52px; border-radius: 18px; padding: 0 6px; }
+#zoombar { bottom: calc(env(safe-area-inset-bottom) + 20px); height: 56px; border-radius: 28px; padding: 0 6px; }
+.bar button { min-width: 48px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 14px; }
+.bar button:active { background: var(--line); }
+.bar .icon { font-size: 26px; font-weight: 500; }
+.bar .text { padding: 0 12px; font-weight: 600; font-size: 15px; }
+.brand { color: var(--brand); }
+#title { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+#pageLabel { color: var(--sub); font-size: 13px; padding: 0 6px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.zoom { min-width: 118px !important; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sep { width: 1px; height: 24px; background: var(--line); }
+/* hidden by a tap on the page: gone AND not clickable - a hidden bar never takes a touch (the Android lesson) */
+body.bars-hidden .bar { opacity: 0; pointer-events: none; }
+body.home .bar, body.home #pages { visibility: hidden; }
+
+/* home */
+#home { position: fixed; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; display: none; flex-direction: column;
+  align-items: center; padding: calc(env(safe-area-inset-top) + 56px) 24px calc(env(safe-area-inset-bottom) + 32px); text-align: center; }
+body.home #home { display: flex; }
+#home .glow { position: fixed; top: 0; left: 0; right: 0; height: 320px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(232,51,74,.16), rgba(232,51,74,0)); }
+/* the mac design itself (look-02): the F breaks out of the tile and carries its own shadow - no CSS frame or shadow */
+.brandIcon { width: 136px; height: 136px; margin: -12px 0; position: relative; }
+#home h1 { font-size: 28px; margin: 18px 0 6px; letter-spacing: -.3px; position: relative; }
+.sub { color: var(--sub); margin: 0; max-width: 420px; position: relative; }
+.cta { margin: 28px 0; width: 260px; height: 56px; border-radius: 18px; color: #fff; font-weight: 600; font-size: 17px;
+  background: linear-gradient(135deg, var(--brand-light), var(--brand) 50%, var(--brand-deep)); box-shadow: 0 8px 20px rgba(232,51,74,.35);
+  position: relative; }
+.cta:active { transform: scale(.97); }
+.cta.small { margin: 0; width: auto; height: 44px; padding: 0 22px; font-size: 15px; border-radius: 14px; }
+.section { align-self: stretch; text-align: left; color: var(--sub); font-size: 12px; font-weight: 600; letter-spacing: .08em;
+  margin: 0 6px 8px; max-width: 560px; width: 100%; margin-left: auto; margin-right: auto; }
+.card { width: 100%; max-width: 560px; background: var(--card); border-radius: 18px; padding: 4px; box-shadow: var(--shadow); text-align: left; }
+.card .row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 14px; text-align: left; }
+.card .row:active { background: var(--line); }
+.card .row .name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .row .meta { color: var(--sub); font-size: 12px; }
+.card .row .grow { flex: 1; min-width: 0; }
+.card .row .x { color: var(--sub); font-size: 18px; min-width: 36px; height: 36px; border-radius: 10px; }
+.card .empty { color: var(--sub); padding: 14px; }
+.how { color: var(--sub); font-size: 13px; margin: 24px 8px 0; max-width: 460px; }
+.install { margin-top: 10px; }
+/* the installer link: second to Open a PDF - outlined in the brand colour */
+.ghost { display: inline-flex; align-items: center; justify-content: center; width: 260px; height: 48px; margin: -14px 0 28px;
+  border-radius: 16px; border: 1.5px solid var(--brand); color: var(--brand); font-weight: 600; font-size: 16px;
+  text-decoration: none; position: relative; }
+.ghost:active { transform: scale(.97); background: var(--line); }
+.ghost[hidden] { display: none; }
+.version { color: var(--sub); font-size: 11px; margin-top: 18px; opacity: .7; }
+body.standalone .install { display: none; }
+/* review: the Home Screen app's status bar text is always white (black-translucent): in Light mode a dark strip goes
+   behind it so the time and battery stay readable */
+@media (prefers-color-scheme: light) {
+  body.standalone::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top);
+    background: rgba(20,20,24,.82); z-index: 40; pointer-events: none; }
+}
+
+/* the zoom box */
+.sheet { position: fixed; inset: 0; background: var(--scrim); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+.sheet[hidden] { display: none; }
+.sheet .panel { width: 100%; max-width: 520px; overflow: hidden; background: var(--card); border-radius: 22px 22px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom) + 16px);
+  box-shadow: var(--shadow); max-height: 85%; display: flex; flex-direction: column; }
+.sheet h2 { margin: 0 0 4px; font-size: 20px; }
+.field { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; font-size: 22px; color: var(--sub); }
+.field input { flex: 1; min-width: 0; font-weight: 600; font-size: 24px; line-height: 1.2; font-family: inherit; color: var(--text); background: var(--line); border: 0; border-radius: 12px;
+  padding: 10px 14px; outline: none; -webkit-user-select: text; user-select: text; font-variant-numeric: tabular-nums; }
+.field .cta.small { flex: none; margin-left: 4px; }
+.list { overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 12px; max-height: 220px; }
+.list button { padding: 10px 14px; border-radius: 12px; background: var(--line); font-weight: 600; font-variant-numeric: tabular-nums; }
+.list button:active { background: var(--brand); color: #fff; }
+.buttons { display: flex; justify-content: flex-end; gap: 10px; padding-top: 8px; }
+.buttons .text { padding: 0 16px; height: 44px; color: var(--sub); font-weight: 600; }
+
+/* busy and toast */
+#busy { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); background: var(--card); box-shadow: var(--shadow);
+  border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; z-index: 15; font-weight: 600; }
+#busy[hidden] { display: none; }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid var(--line); border-top-color: var(--brand); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 96px); transform: translateX(-50%) translateY(20px);
+  background: rgba(30,30,34,.94); color: #fff; padding: 10px 16px; border-radius: 14px; font-weight: 500; opacity: 0;
+  transition: opacity .2s, transform .2s; pointer-events: none; z-index: 30; max-width: 86vw; text-align: center; }
+#toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- the page itself never zooms: every pinch belongs to the PDF (rules zoom-01 / pan-01) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>KBros PDF Editor</title>
+<meta name="description" content="View PDFs on your iPhone and zoom in as far as you like - up to 1,000,000%.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KBros PDF">
+<meta name="theme-color" content="#E7E9ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1C20" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="home">
+<canvas id="pages" aria-label="PDF pages"></canvas>
+
+<header id="top" class="bar">
+  <button id="back" class="icon" aria-label="Home">&#x2039;</button>
+  <div id="title">PDF</div>
+  <div id="pageLabel" aria-live="polite"></div>
+  <button id="openTop" class="text brand">Open</button>
+</header>
+
+<footer id="zoombar" class="bar">
+  <button id="minus" class="icon" aria-label="Zoom out">&#x2212;</button>
+  <span class="sep"></span>
+  <button id="zoomLabel" class="zoom" aria-label="Zoom - tap to type a zoom">&#x2026;</button>
+  <span class="sep"></span>
+  <button id="plus" class="icon" aria-label="Zoom in. Hold for the maximum, 1,000,000%">+</button>
+  <button id="fit" class="text brand">Fit</button>
+</footer>
+
+<section id="home">
+  <div class="glow"></div>
+  <img src="icons/brand-512.png" alt="" class="brandIcon" width="136" height="136">
+  <h1>KBros PDF Editor</h1>
+  <p class="sub">Open a PDF and zoom in as far as you like &ndash; up to 1,000,000%.</p>
+  <button id="openHome" class="cta">Open a PDF</button>
+  <!-- the installer (rule install-01): a profile with one Web Clip - every iPhone installs it, no App Store needed.
+       Shown only in Safari on an iPhone / iPad (app.js); gone once the app runs from the Home Screen -->
+  <a id="installProfile" class="ghost install" href="KBros-PDF-Editor.mobileconfig" hidden>Install the app</a>
+  <div class="section">RECENT</div>
+  <div id="recents" class="card"></div>
+  <p class="how">Pinch, or double-tap to zoom in (again: back to Fit). Drag to move around. Tap the % to type any zoom;
+    hold + for the maximum. Tap the page to hide or show the bars.</p>
+  <p class="how install" id="installHint">To install: tap <b>Install the app</b>, then <b>Allow</b>. Open <b>Settings</b>, tap
+    <b>Profile Downloaded</b>, then <b>Install</b>. Or tap <b>Share</b> &#x2191; then <b>Add to Home Screen</b>. Open it once
+    while online &ndash; after that it works without a connection.</p>
+  <p class="version" id="version"></p>
+</section>
+
+<div id="zoomDialog" class="sheet" role="dialog" aria-modal="true" aria-labelledby="zoomTitle" hidden>
+  <div class="panel">
+    <h2 id="zoomTitle">Zoom</h2>
+    <p class="sub">Type any zoom from 1% to 1,000,000%, or pick one.</p>
+    <!-- the Zoom button sits beside the field: iPhone keeps the field above the keyboard, and the decimal pad has
+         no Go key (review, 24 Nov 2026) -->
+    <div class="field"><input id="zoomInput" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="go"
+      aria-label="Zoom in percent"><span>%</span><button id="zoomGo" class="cta small">Zoom</button></div>
+    <div id="zoomList" class="list"></div>
+    <div class="buttons"><button id="zoomCancel" class="text">Cancel</button></div>
+  </div>
+</div>
+
+<div id="pwDialog" class="sheet" role="dialog" aria-modal="true" aria-labelledby="pwTitle" hidden>
+  <div class="panel">
+    <h2 id="pwTitle">This PDF is protected</h2>
+    <p class="sub">Type its password.</p>
+    <div class="field"><input id="pwInput" type="password" autocomplete="off" autocapitalize="off" autocorrect="off"
+      spellcheck="false" enterkeyhint="go" aria-label="Password"><button id="pwGo" class="cta small">Open</button></div>
+    <div class="buttons"><button id="pwCancel" class="text">Cancel</button></div>
+  </div>
+</div>
+
+<div id="busy" hidden><div class="spinner"></div><span id="busyText">Opening&#x2026;</span></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input id="file" type="file" accept="application/pdf,.pdf" hidden>
+
+<!-- PDF.js 3.11.174 (Apache-2.0), legacy build: runs on older iPhones too. Opened with isEvalSupported:false
+     (CVE-2024-4367). Checked by its hash (integrity here; app.js checks the worker), cached by sw.js for offline use. -->
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"
+        integrity="sha384-OemFRmhjDZwhIKuUld0HJozkF2YErsgDaCL41trxGQZt4/WgnopJQqQl2DvDZ07Z" crossorigin="anonymous"></script>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
